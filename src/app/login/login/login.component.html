@@ -1,0 +1,37 @@
+<div id="container-login">
+    <div id="content-login">
+        <div id="form-login">
+            <div class="header-logo">
+                <h1>Easy</h1>
+                <p class="fin">Finanças</p>
+            </div>
+            <form [formGroup]="formLogin" class="info-login">
+                <div class="align-column">
+                    <label for="login">Usuário:</label>
+                    <input class="input input-login" type="text" placeholder="Email/login" name="login" id="login" formControlName="loginEmail" (blur)="verificaEmail($event)" [ngClass]="{'input-blank': emailVazio && !email?.valid, 'input-valid': !email?.pristine && email?.valid}"
+                    />
+                    <span id="error-login" class="span-error" *ngIf="emailVazio && !email?.valid">Digite seu email ou usuário.</span>
+                </div>
+                <div class="align-column input-password">
+                    <label for="login-password">Senha:</label>
+                    <input class="input" type="password" placeholder="Senha" name="login-password" id="login-password" formControlName="senha" (blur)="verificaSenha($event)" [ngClass]="{'input-blank': senhaVazia && !senha?.valid, 'input-valid': !senha?.pristine && senha?.valid}"
+                    />
+                    <span id="error-password" class="span-error" *ngIf="senhaVazia && !senha?.valid ">Digite sua senha.</span>
+                </div>
+                <div class="button-enter">
+                    <button (click)="authService.SignIn(email?.value,senha?.value)">Entrar</button>
+                </div>
+                <div class="end-info-login">
+                    <a (click)="cadastro()">Cadastre-se</a>
+                    <a routerLink="/recuperarSenha">Esqueceu a senha?</a>
+                </div>
+            </form>
+            <div class="outras-opcoes-login">
+                <button type="button" id="customBtnGoogle" class="btn googleBtn " (click)="authService.GoogleAuth()">
+                  <img class="icon" src="/assets/images/logo-google.png" />
+                  <span class="buttonText">Log in with Google</span>
+              </button>
+            </div>
+        </div>
+    </div>
+</div>

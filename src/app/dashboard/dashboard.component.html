@@ -1,0 +1,160 @@
+<div id="confCustom" class="container">
+    <div class="content">
+        <div class="dashboard">
+            <div class="lateral-esquerda">
+                <div id="logo">
+                    <h1>Easy</h1>
+                    <p class="fin">Finanças</p>
+                </div>
+                <!-- <button (click)="enviarEmail()">ENVIAR EMAIL</button> -->
+                <!-- Example single danger button -->
+                <!-- <div class="btn-adicionar">
+                    <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Adicionar</button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalConta" data-bs-whatever="@mdo">Conta</a></li>
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalDespesa" data-bs-whatever="@mdo">Despesa</a></li>
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalRecurso" data-bs-whatever="@mdo">Recurso</a></li>
+                    </ul>
+                </div> -->
+                <!-- <button style="margin-top: 15px;" (click)="authService.SignOut()">Sair</button> -->
+                <div id="listaOpcoes" class="lista-opcoes">
+                    <li (click)="showDashboard()">Dashboard</li>
+                    <li (click)="showRecursos()">Recursos</li>
+                    <li (click)="showDespesas()">Despesas</li>
+                    <li (click)="showContas()">Contas</li>
+                    <li (click)="showCC()">Cartão de crédito</li>
+                </div>
+            </div>
+            <div class="board">
+                <!-- Image and text -->
+                <nav class="navbar navbar-light bg-light">
+                    <div class="container-fluid info-User">
+                        <div class="nome-user">
+                            {{users?.displayName}}
+                            <!-- <button id="btnGroupDrop1" type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"> -->
+                            <img src="/assets/images/user.png" alt="" id="btnGroupDrop1" width="50" class=" img-user d-inline-block align-top dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- </button> -->
+                            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                <li><a class="dropdown-item btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEmail" *ngIf="!isDep">Compartilhar finanças</a></li>
+                                <li><a class="dropdown-item" (click)="authService.SignOut()">Sair</a></li>
+
+                                <div *ngIf="infoChild">
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li class="info-child">Compartilhamento</li>
+                                    <li class=" info-child">
+                                        <p class="display-name-child"><b>{{infoChild.displayName}}</b></p>
+                                    </li>
+                                    <li class=" info-child email-child">{{infoChild.email}}</li>
+                                </div>
+                            </ul>
+
+                        </div>
+                    </div>
+                </nav>
+                <div *ngIf="exibirContas">
+                    <app-conta></app-conta>
+                </div>
+                <div *ngIf="exibirDespesas">
+                    <app-despesa></app-despesa>
+                </div>
+                <div *ngIf="exibirRecursos">
+                    <app-recursos></app-recursos>
+                </div>
+                <div *ngIf="exibirCartoes">
+                    <app-cartao-credito></app-cartao-credito>
+                </div>
+                <div *ngIf="exibirBoard">
+                    <app-board></app-board>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Email -->
+<div class="modal fade" id="modalEmail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 *ngIf="!loading && !successSendEmail && !errorSendEmail" class="modal-title" id="exampleModalLabel">Compartilhar finanças</h2>
+                <h2 *ngIf="loading && !successSendEmail && !errorSendEmail" class="modal-title title-error" id="exampleModalLabel">Aguarde...</h2>
+                <h2 *ngIf="errorSendEmail" class="modal-title title-error" id="exampleModalLabel">Erro ao enviar o email!</h2>
+                <h2 *ngIf="successSendEmail" class="modal-title title-success" id="exampleModalLabel">Email enviado!</h2>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="resetInfo()"></button>
+            </div>
+            <div *ngIf="!loading && !successSendEmail && !errorSendEmail">
+                <div class="modal-body">
+                    Você pode adicionar até 1 pessoa para compartilhar as finanças. Essa pessoa poderá <b>adicionar</b> e <b>remover </b><i>recursos, despesas, contas e cartões de créditos</i>. Assim como também realizar as transações de pagamento e etc.
+                </div>
+
+                <div class="modal-body">
+                    <p>Adicione o email da pessoa com quem deseja compartilhar suas finanças. Ela receberá um link para cadastro.</p>
+                    <form [formGroup]="formAdicionarDep" class="form-cadastro" id="form-cadastro">
+                        <!-- NOME -->
+                        <div>
+                            <label class="form-label" for="nomeDep">Nome:</label>
+                            <input type="text" name="" id="nomeDep" #nomeDep placeholder="João Silva" class="form-control" formControlName="nome" (keyup)="verifyNomeKd()" (blur)="verifyName($event)" [ngClass]="{'input-blank':( nomeVazio && !nome?.valid) || nomeInvalido , 'input-valid': !nome?.pristine && nome?.valid }">
+                            <span id="error-login" class="span-error " *ngIf="nomeInvalido">Digite nome e sobrenome!</span >
+                            <span id="error-login" class="span-error " *ngIf="(nomeVazio && !nome?.valid) ">Não esqueça de digitar um nome!</span>
+                        </div>
+                        <!-- EMAIL -->
+                        <div class="align-inputs-email">
+                            <label class="form-label" for="emailDep">Email:</label>
+                            <input type="email" id="emailDep" class="form-control" (keyup)="verifyEmailKd()" (blur)="verifyEmail($event)" #emailDep placeholder="exemplo@email.com" aria-label="Username" aria-describedby="addon-wrapping" formControlName="email" [ngClass]="{'input-blank': email?.pristine && emailVazio || (!email?.pristine && email?.invalid), 'input-valid': !emailVazio && email?.pristine && email?.valid}">
+                            <span id="error-login" class="span-error " *ngIf="emailVazio && email?.pristine">Digite seu email.</span >
+                            <span id="error-login" class="span-error " *ngIf="!email?.pristine && !email?.valid">Email inválido!</span >
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"  (click)="resetInfo()">Fechar</button>
+                    <button type="button" class="btn btn-primary" (click)="enviarEmail(nomeDep?.value, emailDep?.value)">Enviar</button>
+                </div>
+            </div>
+
+            <div *ngIf="loading && !successSendEmail && !errorSendEmail" class="modal-body">
+                <div class="loader"></div>
+
+            </div>
+
+            <div *ngIf="successSendEmail">
+                <div class="modal-body">
+                    <div class="sa">
+                        <div class="sa-success">
+                            <div class="sa-success-tip"></div>
+                            <div class="sa-success-long"></div>
+                            <div class="sa-success-placeholder"></div>
+                            <div class="sa-success-fix"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetInfo()">Fechar</button>
+                </div>
+            </div>
+
+            <div *ngIf="errorSendEmail">
+                <div class="modal-body">
+                    <p>Erro ao enviar o email, verifique as informações enviadas ou tente novamente mais tarde.</p>
+                    <div class="sa">
+                        <div class="sa-error">
+                            <div class="sa-error-x">
+                                <div class="sa-error-left"></div>
+                                <div class="sa-error-right"></div>
+                            </div>
+                            <div class="sa-error-placeholder"></div>
+                            <div class="sa-error-fix"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetInfo()">Fechar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,356 @@
+label,
+h5,
+span,
+p {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    font-size: 50px;
+    height: 50px;
+    font-family: fantasy;
+    color: cadetblue;
+}
+
+button {
+    height: 40px;
+    width: 100%;
+    background-color: cadetblue;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.53);
+}
+
+button:active {
+    background-color: #0a7d72;
+}
+
+input {
+    height: 40px;
+    border-radius: 5px;
+    border: solid 1px cadetblue;
+    outline: none;
+    padding-left: 10px;
+    margin-top: 5px;
+    color: #818181;
+    font-weight: bold;
+    background-color: transparent;
+}
+
+input::placeholder {
+    color: #818181;
+    opacity: 0.5;
+    /* Firefox */
+}
+
+.error {
+    background-color: #bd0202;
+}
+
+.success {
+    background-color: #1b6f06;
+}
+
+.alert {
+    background-color: #f5b604;
+}
+
+.info {
+    background-color: #636262;
+}
+
+.show {
+    display: show;
+}
+
+.hide {
+    display: none !important;
+}
+
+.show-flex {
+    display: flex;
+}
+
+
+/*# sourceMappingURL=main.css.map */
+
+#container-login {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #e0e0e0;
+}
+
+#content-login {
+    width: 300px;
+    padding: 24px;
+    border-radius: 20px;
+    box-shadow: 2px 2px 12px -1px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.input-blank {
+    border: solid 1px red;
+}
+
+.button-enter {
+    margin-top: 15px;
+}
+
+.header-logo {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.fin {
+    margin-top: -20px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.align-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#form-login {
+    width: 100%;
+}
+
+.end-info-login {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.end-info-login a {
+    cursor: pointer;
+    color: cadetblue;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+.end-info-login a:active {
+    color: #0a7d72;
+}
+
+.input-password {
+    margin-top: 15px;
+}
+
+.span-error {
+    margin-top: 3px;
+    font-size: 12px;
+    color: red;
+}
+
+.show {
+    display: show;
+}
+
+.hide {
+    display: none !important;
+}
+
+.show-flex {
+    display: flex;
+}
+
+
+/* Modal */
+
+.modal {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    position: absolute;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #212121a8;
+}
+
+.modal-error {
+    width: 100%;
+    min-width: 300px;
+    max-width: 500px;
+    /* height: 200px; */
+    /* padding: 24px; */
+    border-radius: 20px;
+    background-color: #fff;
+    box-shadow: 2px 2px 12px -1px rgba(0, 0, 0, 0.1);
+}
+
+.header-modal {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    justify-content: space-between;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 10px 24px;
+}
+
+.body-modal {
+    text-align: center;
+    padding: 24px;
+}
+
+.modal-content {
+    border-radius: 24px;
+}
+
+.modal-content hr {
+    background-color: cadetblue;
+    border: solid 0.5px cadetblue;
+    margin-block-start: 0;
+}
+
+.modal-content span {
+    color: #fff;
+    font-family: cursive;
+    margin-right: 24px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.img-modal-header {
+    width: 35px;
+}
+
+@media (max-width: 450px) {
+    .modal {
+        width: auto;
+        height: 100vh;
+        padding-left: 24px;
+        padding-right: 24px;
+        display: flex;
+        position: absolute;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        background-color: #212121a8;
+    }
+    .modal-error {
+        width: 100%;
+        min-width: auto;
+        max-width: none;
+        /* height: 200px; */
+        padding: 24px;
+        border-radius: 20px;
+        background-color: #fff;
+        box-shadow: 2px 2px 12px -1px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.modal-content {
+    border-radius: 24px;
+}
+
+.modal-content hr {
+    background-color: cadetblue;
+    border: solid 0.5px cadetblue;
+    margin-block-start: 0;
+}
+
+.modal-content span {
+    color: #fff;
+    font-family: cursive;
+    margin-right: 24px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.img-modal-header {
+    width: 35px;
+}
+
+// button google
+.outras-opcoes-login {
+    margin-top: 24px;
+}
+
+#customBtnGoogle {
+    display: flex;
+    background: white;
+    color: #444;
+    width: 190px;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    border: thin solid #888;
+    box-shadow: 1px 1px 1px grey;
+    white-space: nowrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#customBtn:hover {
+    cursor: pointer;
+}
+
+span.label {
+    font-family: serif;
+    font-weight: normal;
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+}
+
+span.buttonText {
+    font-size: 14px;
+    font-weight: bold;
+    /* Use the Roboto font that is loaded in the <head> */
+    font-family: 'Roboto', sans-serif;
+}
+
+@media (max-width: 450px) {
+    .modal {
+        width: auto;
+        height: 100vh;
+        padding-left: 24px;
+        padding-right: 24px;
+        display: flex;
+        position: absolute;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        background-color: #212121a8;
+    }
+    .modal-error {
+        width: 100%;
+        min-width: auto;
+        max-width: none;
+        /* height: 200px; */
+        padding: 24px;
+        border-radius: 20px;
+        background-color: #fff;
+        box-shadow: 2px 2px 12px -1px rgba(0, 0, 0, 0.1);
+    }
+}
+
+
+/*# sourceMappingURL=login.css.map */

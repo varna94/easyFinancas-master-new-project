@@ -1,0 +1,235 @@
+<div class="tableDespesas">
+    <div class="header-card-despesa">
+        <button type="button" class="btn btn-outline-success btn-with-icon" data-bs-toggle="modal" data-bs-target="#modalDespesa" data-bs-whatever="@mdo" (click)="criarFormDespesa()">Adicionar
+      <span class="material-icons align-icon-btn">add_circle_outline</span>
+    </button>
+    </div>
+    <h1>Despesas</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Valor</th>
+                <th scope="col">Conta</th>
+                <th scope="col">descrição</th>
+                <th scope="col">Fixa?</th>
+                <th scope="col">Status</th>
+                <th scope="col">Data de Vencimento</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let d of despesas">
+                <!-- <th scope="row">1</th> -->
+                <th>{{$any(d).valor | currency: 'BRL'}} </th>
+                <td>{{$any(d).conta}}</td>
+                <td>{{$any(d).descricao}}</td>
+                <td>{{$any(d).fixa}}</td>
+                <td>{{$any(d).status}}</td>
+                <td>{{$any(d).dataVencimento | date: 'dd/MM/yyyy'}}</td>
+                <td>
+                    <span class="material-icons" data-bs-toggle="modal" data-bs-target="#modalDespesaEdit" (click)="editDespesa($any(d)._id)"> mode_edit</span>
+                    <span class="material-icons material-icons-delete" data-bs-toggle="modal" data-bs-target="#ConfirmarExclusãoDespesa" (click)="deleteInfo($any(d)._id,$any(d).valor,$any(d).conta)">delete</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+<!-- MODAL CADASTRO DESPESA -->
+<div id="modal" class="modal fade modal-fullscreen-md-down" id="modalDespesa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nova despesa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formadicionarDespesa">
+                    <label for="conta-saldo">Valor:</label>
+                    <input type="text" currencyMask id="conta-saldo" class="form-control" formControlName="valor">
+                    <div class="row">
+                        <div class="mb-3 col ">
+                            <label for="conta-name " class="col-form-label">Descrição:</label>
+                            <textarea type="text " class="form-control " id="conta-name " formControlName="descricao"></textarea>
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="conta-name " class="col-form-label">Data de vencimento  :</label>
+                            <input type="date" class="form-control " id="conta-name " formControlName="dataVencimento">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col ">
+                            <label class="form-check-label col-form-label" for="flexCheckDefault">Fixa:</label>
+                            <input class="form-check-input mt-3 margin-right " type="checkbox" value="" id="flexCheckDefault" formControlName="fixa">
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="conta-instituicao " class="col-form-label ">Status:</label>
+                            <select type="select " class="form-control form-select " id="conta-instituicao " formControlName="status">
+                                <option selected>Selecione</option>
+                                <option selected>Paga</option>
+                                <option selected>Pendente</option>
+                                <option selected>Vencida</option>
+
+                              </select>
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="conta-banco " class="col-form-label ">Conta:</label>
+                            <select type="select " class="form-control form-select" id="conta-banco" formControlName="conta">
+                                <option selected>Selecione</option>
+                                <option *ngFor="let ls of listaCB" value="{{$any(ls).nome}}-{{$any(ls)._id}}">{{$any(ls).nome}} - {{$any(ls).banco}}</option>
+                              </select>
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Categoria:</label>
+                            <select type="select " class="form-control form-select " id="conta-tipo " formControlName="categoria">
+                                <option selected>Selecione</option>
+                                <option>Alimentação</option>
+                                <option>Saúde</option>
+                                <option>Educação</option>
+                                <option>Transporte</option>
+                              </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="criarDespesa()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL EDIÇÂO DESPESA -->
+<div id="modal" class="modal fade modal-fullscreen-md-down" id="modalDespesaEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nova despesa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formadicionarDespesa">
+                    <label for="conta-saldo">Valor:</label>
+                    <input type="text" currencyMask id="conta-saldo" class="form-control" formControlName="valor">
+                    <div class="row">
+                        <div class="mb-3 col ">
+                            <label for="conta-name " class="col-form-label">Descrição:</label>
+                            <textarea type="text " class="form-control " id="conta-name " formControlName="descricao"></textarea>
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="conta-name " class="col-form-label">Data de vencimento:</label>
+                            <input type="date" class="form-control " id="conta-name " formControlName="dataVencimento">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col ">
+                            <label class="form-check-label col-form-label" for="flexCheckDefault">Fixa:</label>
+                            <input class="form-check-input mt-3 margin-right " type="checkbox" value="" id="flexCheckDefault" formControlName="fixa">
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="conta-instituicao " class="col-form-label ">Status:</label>
+                            <select type="select " class="form-control form-select " id="conta-instituicao " formControlName="status">
+                              <option selected>Selecione</option>
+                              <option selected>Paga</option>
+                              <option selected>Pendente</option>
+                              <option selected>Vencida</option>
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="conta-banco " class="col-form-label ">Conta:</label>
+                            <select type="select " class="form-control form-select" id="conta-banco" formControlName="conta">
+                              <option selected>Selecione</option>
+                              <option *ngFor="let ls of listaCB" value="{{$any(ls).nome}}-{{$any(ls)._id}}">{{$any(ls).nome}} - {{$any(ls).banco}}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Categoria:</label>
+                            <select type="select " class="form-control form-select " id="conta-tipo " formControlName="categoria">
+                              <option selected>Selecione</option>
+                              <option>Alimentação</option>
+                              <option>Saúde</option>
+                              <option>Educação</option>
+                              <option>Transporte</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="updateDespesa(updateDespInfo)">Atualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CONFIRMAR EXCLUSÃO -->
+
+<div class="modal fade" id="ConfirmarExclusãoDespesa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 *ngIf="!successDelete && !errorDelete" class="modal-title" id="exampleModalLabel">Tem certeza que deseja excluir?</h2>
+                <h2 *ngIf="successDelete" class="modal-title title-success" id="exampleModalLabel">Sucesso!</h2>
+                <h2 *ngIf="errorDelete" class="modal-title title-error" id="exampleModalLabel">Não foi possível deletar, tente novamente mais tarde.</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="!successDelete && !errorDelete" id="itensDell">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Conta</th>
+                                <th scope="col">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td scope="row">{{conta}}</td>
+                                <td>{{saldo | currency: 'BRL'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div *ngIf="successDelete" id="successDel" class="centralizar-icon">
+                    <div class="sa">
+                        <div class="sa-success">
+                            <div class="sa-success-tip"></div>
+                            <div class="sa-success-long"></div>
+                            <div class="sa-success-placeholder"></div>
+                            <div class="sa-success-fix"></div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="errorDelete" id="errorDel" class="centralizar-icon">
+                    <div class="sa">
+                        <div class="sa-error">
+                            <div class="sa-error-x">
+                                <div class="sa-error-left"></div>
+                                <div class="sa-error-right"></div>
+                            </div>
+                            <div class="sa-error-placeholder"></div>
+                            <div class="sa-error-fix"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="zerarVariaveis()">Fechar</button>
+                <button *ngIf="!successDelete && !errorDelete" type="button" class="btn btn-danger" (click)="deleteDespesa(idDelete)">Deletar</button>
+            </div>
+        </div>
+    </div>
+</div>

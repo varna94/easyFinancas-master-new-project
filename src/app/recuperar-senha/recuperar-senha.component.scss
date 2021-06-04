@@ -1,0 +1,74 @@
+input {
+    height: 40px;
+    border-radius: 5px;
+    border: solid 1px cadetblue;
+    outline: none;
+    padding-left: 10px;
+    color: #818181;
+    font-weight: bold;
+    background-color: transparent;
+}
+
+input::placeholder {
+    color: #818181;
+    opacity: 0.5;
+    /* Firefox */
+}
+
+a,
+h3 {
+    color: cadetblue;
+}
+
+.centralizar {
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    margin-top: 50px;
+    padding: 15px;
+}
+
+.authBlock {
+    h3 {
+        text-align: center;
+    }
+}
+
+.input-recuperar-senha {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.email-recuerar-senha {
+    width: 100%;
+}
+
+.btn-rec {
+    text-align: center;
+}
+
+.btn-confirm-recuperar-senha {
+    margin-top: 10px;
+    outline: none;
+    border: solid 1px cadetblue;
+}
+
+.redirect {
+    font-weight: bold;
+}
+
+.input-blank {
+    border: solid 1px red;
+}
+
+.input-valid {
+    border: solid 1px cadetblue;
+}
+
+.span-error {
+    margin-top: 3px;
+    font-size: 12px;
+    color: red;
+    text-align: left;
+    align-self: flex-start;
+}

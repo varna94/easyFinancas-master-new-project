@@ -1,0 +1,264 @@
+<div class="card-recursos">
+    <div class="header-card-recursos">
+        <button type="button" class="btn btn-outline-success btn-with-icon" data-bs-toggle="modal" data-bs-target="#modalRecurso" data-bs-whatever="@mdo">Adicionar
+          <span class="material-icons align-icon-btn">add_circle_outline</span>
+        </button>
+    </div>
+    <h1>Recursos</h1>
+    <div class="">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Conta</th>
+                    <th scope="col">Saldo</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Recebido</th>
+                    <th scope="col">Data de recebimento</th>
+                    <th scope="col">Descrição</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let recurso of listRecursos">
+                    <th scope="row">{{$any(recurso).conta}}</th>
+                    <td>{{$any(recurso).saldo.toString() | currency: 'BRL'}}</td>
+                    <td>{{$any(recurso).tipo}}</td>
+                    <td>{{$any(recurso).recebido ? 'Sim' : 'Não'}}</td>
+                    <td>{{$any(recurso).dataRecebimento | date: 'dd/MM/yyyy'}}</td>
+                    <td>{{$any(recurso).descricao}}</td>
+                    <td>
+                        <span class="material-icons" data-bs-toggle="modal" data-bs-target="#modalEditRecurso" (click)="editRecurso($any(recurso)._id)"> mode_edit</span>
+                        <span class="material-icons material-icons-delete" data-bs-toggle="modal" data-bs-target="#ConfirmarExclusão" (click)="deleteInfo($any(recurso)._id,$any(recurso).saldo,$any(recurso).conta)">delete</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- MODAL CONFIRMAR EXCLUSÃO -->
+
+<div class="modal fade" id="ConfirmarExclusão" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 *ngIf="!successDelete && !errorDelete" class="modal-title" id="exampleModalLabel">Tem certeza que deseja excluir?</h2>
+                <h2 *ngIf="successDelete" class="modal-title title-success" id="exampleModalLabel">Sucesso!</h2>
+                <h2 *ngIf="errorDelete" class="modal-title title-error" id="exampleModalLabel">Não foi possível deletar, tente novamente mais tarde.</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="!successDelete && !errorDelete" id="itensDell">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Conta</th>
+                                <th scope="col">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td scope="row">{{conta}}</td>
+                                <td>{{saldo | currency: 'BRL'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div *ngIf="successDelete" id="successDel" class="centralizar-icon">
+                    <div class="sa">
+                        <div class="sa-success">
+                            <div class="sa-success-tip"></div>
+                            <div class="sa-success-long"></div>
+                            <div class="sa-success-placeholder"></div>
+                            <div class="sa-success-fix"></div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="errorDelete" id="errorDel" class="centralizar-icon">
+                    <div class="sa">
+                        <div class="sa-error">
+                            <div class="sa-error-x">
+                                <div class="sa-error-left"></div>
+                                <div class="sa-error-right"></div>
+                            </div>
+                            <div class="sa-error-placeholder"></div>
+                            <div class="sa-error-fix"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="zerarVariaveis()">Fechar</button>
+                <button *ngIf="!successDelete && !errorDelete" type="button" class="btn btn-danger" (click)="deleteRecurso(idDelete)">Deletar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDICAO RECURSO -->
+<div id="modal" class="modal fade modal-fullscreen-md-down" id="modalEditRecurso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Novo recurso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formAdicionarRecursos">
+
+                    <label for="conta-saldo">Valor:</label>
+                    <input type="text" currencyMask id="conta-saldo" class="form-control" formControlName="saldo">
+
+                    <div class="row">
+
+                        <div class="mb-3 col ">
+                            <label for="conta-name " class="col-form-label">Conta:</label>
+                            <select type="select " class="form-control form-select " id="conta-banco " formControlName="conta">
+                          <option selected>Selecione</option>
+                          <option *ngFor="let ls of listaCB" value="{{$any(ls).nome}}-{{$any(ls)._id}}">{{$any(ls).nome}} - {{$any(ls).banco}}</option>
+                        </select>
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="conta-instituicao " class="col-form-label ">Data recebimento:</label>
+                            <input type="date" class="form-control " id="conta-name " formControlName="dataRecebimento">
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Recebido?</label>
+                            <input class="form-check-input mt-3 margin-right " type="checkbox" value="" id="flexCheckDefault" formControlName="recebido">
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Receita fixa?</label>
+                            <input class="form-check-input mt-3 margin-right " type="checkbox" value="" id="flexCheckDefault" formControlName="receitaFixa">
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Repetir:</label>
+                            <input class="form-control mt-3 margin-right " type="number" placeholder="1" value="" id="" formControlName="repetir">
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="message-text " class="col-form-label ">Período:</label>
+                            <select type="select " class="form-control form-select " id="periodo" formControlName="periodo">
+                          <option selected>Selecione</option>
+                          <option value="Dias">Dias</option>
+                          <option value="Dias">Semanas</option>
+                          <option value="Mes">Meses</option>
+                          <option value="Trimestre">Trimestre</option>
+                          <option value="Semestre">Semestre</option>
+                          <option value="Anual">Anual</option>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col">
+                            <label for="recursoTipo" class="col-form-label ">Tipo:</label>
+                            <select type="select " class="form-control form-select " id="recursoTipo" formControlName="tipo">
+                          <option selected>Selecione</option>
+                          <option value="Salário">Salário</option>
+                          <option value="Prêmio">Prêmio</option>
+                          <option value="Presente">Presente</option>
+                          <option value="Investimento">Investimento</option>
+                        </select>
+                        </div>
+                        <div class="mb-3 col">
+                            <label for="message-text" class="col-form-label ">Descrição:</label>
+                            <textarea class="form-control " id="message-text " formControlName="descricao"></textarea>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="updateRecursos(updateRecursoInfo)">Atualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL CADASTRO RECURSO -->
+<div id="modal" class="modal fade modal-fullscreen-md-down" id="modalRecurso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Novo recurso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formAdicionarRecursos">
+
+                    <label for="conta-saldo">Valor:</label>
+                    <input type="text" currencyMask id="conta-saldo" class="form-control" formControlName="saldo">
+
+                    <div class="row">
+
+                        <div class="mb-3 col ">
+                            <label for="conta-name " class="col-form-label">Conta:</label>
+                            <select type="select " class="form-control form-select " id="conta-banco " formControlName="conta">
+                            <option selected>Selecione</option>
+                            <option *ngFor="let ls of listaCB" value="{{$any(ls).nome}}-{{$any(ls)._id}}">{{$any(ls).nome}} - {{$any(ls).banco}}</option>
+                          </select>
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="conta-instituicao " class="col-form-label ">Data recebimento:</label>
+                            <input type="date" class="form-control " id="conta-name " formControlName="dataRecebimento">
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Recebido?</label>
+                            <input class="form-check-input mt-3 margin-right " type="checkbox" value="" id="flexCheckDefault" formControlName="recebido">
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Receita fixa?</label>
+                            <input class="form-check-input mt-3 margin-right " type="checkbox" value="" id="flexCheckDefault" formControlName="receitaFixa">
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Repetir:</label>
+                            <input class="form-control mt-3 margin-right " type="number" placeholder="1" value="" id="" formControlName="repetir">
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="message-text " class="col-form-label ">Período:</label>
+                            <select type="select " class="form-control form-select " id="periodo" formControlName="periodo">
+                            <option selected>Selecione</option>
+                            <option value="Dias">Dias</option>
+                            <option value="Dias">Semanas</option>
+                            <option value="Mes">Meses</option>
+                            <option value="Trimestre">Trimestre</option>
+                            <option value="Semestre">Semestre</option>
+                            <option value="Anual">Anual</option>
+                          </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col">
+                            <label for="recursoTipo" class="col-form-label ">Tipo:</label>
+                            <select type="select " class="form-control form-select " id="recursoTipo" formControlName="tipo">
+                            <option selected>Selecione</option>
+                            <option value="Salário">Salário</option>
+                            <option value="Prêmio">Prêmio</option>
+                            <option value="Presente">Presente</option>
+                            <option value="Investimento">Investimento</option>
+                          </select>
+                        </div>
+                        <div class="mb-3 col">
+                            <label for="message-text" class="col-form-label ">Descrição:</label>
+                            <textarea class="form-control " id="message-text " formControlName="descricao"></textarea>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="criarRecursos()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>

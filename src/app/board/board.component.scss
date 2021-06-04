@@ -1,0 +1,50 @@
+.container {
+    width: 100%;
+    height: 100vh;
+    background-color: #fff;
+}
+
+.content {
+    padding: 24px;
+    width: 100%;
+    height: 100%;
+    border-radius: 20%;
+}
+
+.card-recursos {
+    border-radius: 20px;
+    padding: 24px;
+    width: 200px;
+    background-color: #fff;
+    box-shadow: 2px 2px 12px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card-despesas {
+    border-radius: 20px;
+    padding: 24px;
+    width: 200px;
+    background-color: #fff;
+    box-shadow: 2px 2px 12px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card-conta {
+    border-radius: 20px;
+    padding: 24px;
+    width: 200px;
+    background-color: #fff;
+    box-shadow: 2px 2px 12px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card-cartao {
+    border-radius: 20px;
+    padding: 24px;
+    width: 200px;
+    background-color: #fff;
+    box-shadow: 2px 2px 12px -1px rgba(0, 0, 0, 0.1);
+}
+
+.board {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}

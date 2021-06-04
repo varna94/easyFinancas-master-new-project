@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "easyfinancas-d1cb0": {
+      "hosting": {
+        "easyFinancas": [
+          "easyfinancas-d1cb0"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,365 @@
+<div class="container">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4">
+        <div class="col card-cc">
+            <a class="btn-add-cc" data-bs-toggle="modal" data-bs-target="#modalCartaoCadastro" data-bs-whatever="@mdo">
+                <button type="button" class="btn btn-outline-primary btn-size-add-cc">+</button>
+            </a>
+        </div>
+        <div *ngFor="let cc of listCartoes" class="col card-cc">
+            <div class="card ">
+                <div class="card-body">
+                    <div class="header-card-conta">
+                        <div class="header--1">
+                            <img class="img-bandeira-cartao" src="/assets/images/bandeiraCartoes/{{$any(cc).bandeira}}.png" alt="">
+                            <h3 class="card-title">{{$any(cc).nome}}</h3>
+                        </div>
+                        <div>
+                            <div class="dropdown align-dropdown">
+                                <a class=" dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="material-icons"> more_vert </span></a>
+
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalCartaoEdit" (click)="editCartao($any(cc)._id)">Editar</a></li>
+                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#ConfirmarExclusãoDespesa" (click)="excluiCartaoInfo($any(cc)._id, $any(cc).nome, $any(cc).bandeira, $any(cc).limite)">Excluir</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <p>{{$any(cc)._id}}</p> -->
+                    <p class="card-text">Limite: {{$any(cc).limite | currency: 'BRL'}}</p>
+                    <p class="card-text">Total em despesas: ---</p>
+
+                    <a (click)="abrirModalAddDespesaCC($any(cc).bandeira,$any(cc)._id)" data-bs-toggle="modal" data-bs-target="#modalCartao" data-bs-whatever="@mdo" class="card-link">Adicionar despesa</a>
+                    <a (click)="exibirFatura($any(cc).nome,$any(cc).bandeira,$any(cc)._id)" class="card-link " data-bs-toggle="modal" data-bs-target="#modalFatura">Ver despesa</a>
+                    <!-- <a href="#" class="card-link">Another link</a> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CRIAR DESPESA CARTAO -->
+<div id="modal" id="modalDespesaCC" class="modal fade modal-fullscreen-md-down" id="modalCartao" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Nova despesa - {{bandeira}}</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formadicionarDespesaCC">
+                    <label for="conta-saldo">Valor:</label>
+                    <input type="text" currencyMask id="conta-saldo" class="form-control" formControlName="valor">
+                    <div class="row">
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Categoria:</label>
+                            <select type="select " class="form-control form-select " id="conta-tipo " formControlName="categoria">
+                          <option selected>Selecione</option>
+                          <option>Alimentação</option>
+                          <option>Saúde</option>
+                          <option>Educação</option>
+                          <option>Transporte</option>
+                        </select>
+                        </div>
+
+                    </div>
+
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Repetir:</label>
+                            <input class="form-control mt-3 margin-right " type="number" placeholder="1" value="" id="" formControlName="repetir">
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="periodo" class="col-form-label ">Período:</label>
+                            <select type="select " class="form-control form-select " id="periodo" formControlName="periodo">
+                                <option selected>Selecione</option>
+                                <option value="Dias">Dias</option>
+                                <option value="Dias">Semanas</option>
+                                <option value="Mes">Meses</option>
+                                <option value="Trimestre">Trimestre</option>
+                                <option value="Semestre">Semestre</option>
+                                <option value="Anual">Anual</option>
+                          </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col ">
+                            <label class="form-check-label col-form-label" for="flexCheckDefault">Fixa:</label>
+                            <input class="form-check-input mt-3 margin-right " type="checkbox" value="" id="flexCheckDefault" formControlName="fixa">
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="conta-name " class="col-form-label">Descrição:</label>
+                            <textarea type="text " class="form-control " id="conta-name " formControlName="descricao"></textarea>
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="conta-name " class="col-form-label">Data de vencimento  :</label>
+                            <input type="date" class="form-control " id="conta-name " formControlName="dataVencimento">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="addDespesaCC(idCC)">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDIT CARTAO DE CREDITO -->
+<div id="modal" class="modal fade modal-fullscreen-md-down" id="modalCartaoEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Novo cartão</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formAdicionarCartao">
+                    <label for="conta-saldo">Nome:</label>
+                    <input type="text" id="conta-saldo" class="form-control" formControlName="nome">
+
+                    <div class="row">
+                        <div class="mb-3 col ">
+                            <label for="conta-name " class="col-form-label">Limite:</label>
+                            <input type="text" currencyMask class="form-control" id="conta-name " formControlName="limite" maxlength="15">
+                        </div>
+                        <div class="mb-3 col dropdown">
+                            <label for="conta-name " class="col-form-label">Bandeira:</label>
+                            <select class="form-select" aria-label="Default select example" formControlName="bandeira">
+                            <option selected>Selecione</option>
+                            <option value="MasterCard">Master</option>
+                            <option value="visa">Visa</option>
+                            <option value="hipercard">HiperCard</option>
+                            <option value="amex">Amex</option>
+                          </select>
+
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Conta:</label>
+                            <select type="select " class="form-control form-select " id="conta-tipo " formControlName="banco">
+                              <option selected value="carteira">Carteira</option>
+                              <option *ngFor="let ls of listaCB" value="{{$any(ls).nome}}-{{$any(ls)._id}}">{{$any(ls).nome}} - {{$any(ls).banco}}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="message-text " class="col-form-label ">Descrição:</label>
+                            <textarea class="form-control " id="message-text " formControlName="descricao"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="cartao-dataFechamentoFatura" class="col-form-label ">Data fechamento da fatura:</label>
+                            <input type="date" class="form-control " id="cartao-dataFechamentoFatura" formControlName="dataFechamentoFatura">
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="cartao-dataVencimentoFatura" class="col-form-label ">Data vencimento da fatura:</label>
+                            <input type="date" class="form-control " id="cartao-dataVencimentoFatura" formControlName="dataVencimentoFatura">
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="updateCartao(deleteCc)">Atualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- MODAL CADASTRO CARTAO DE CREDITO -->
+<div id="modal" class="modal fade modal-fullscreen-md-down" id="modalCartaoCadastro" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Novo cartão</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formAdicionarCartao">
+                    <label for="conta-saldo">Nome:</label>
+                    <input type="text" id="conta-saldo" class="form-control" formControlName="nome">
+
+                    <div class="row">
+                        <div class="mb-3 col ">
+                            <label for="conta-name " class="col-form-label">Limite:</label>
+                            <input type="text" currencyMask class="form-control" id="conta-name " formControlName="limite" maxlength="15">
+                        </div>
+                        <div class="mb-3 col dropdown">
+                            <label for="conta-name " class="col-form-label">Bandeira:</label>
+                            <select class="form-select" aria-label="Default select example" formControlName="bandeira">
+                              <option selected>Selecione</option>
+                              <option value="MasterCard">Master</option>
+                              <option value="visa">Visa</option>
+                              <option value="hipercard">HiperCard</option>
+                              <option value="amex">Amex</option>
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="conta-tipo " class="col-form-label ">Conta:</label>
+                            <select type="select " class="form-control form-select " id="conta-tipo " formControlName="banco">
+                                <option selected value="carteira">Carteira</option>
+                                <option *ngFor="let ls of listaCB" value="{{$any(ls).nome}}-{{$any(ls)._id}}">{{$any(ls).nome}} - {{$any(ls).banco}}</option>
+                              </select>
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="message-text " class="col-form-label ">Descrição:</label>
+                            <textarea class="form-control " id="message-text " formControlName="descricao"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row ">
+                        <div class="mb-3 col ">
+                            <label for="cartao-dataFechamentoFatura" class="col-form-label ">Data fechamento da fatura:</label>
+                            <input type="date" class="form-control " id="cartao-dataFechamentoFatura" formControlName="dataFechamentoFatura">
+                        </div>
+                        <div class="mb-3 col ">
+                            <label for="cartao-dataVencimentoFatura" class="col-form-label ">Data vencimento da fatura:</label>
+                            <input type="date" class="form-control " id="cartao-dataVencimentoFatura" formControlName="dataVencimentoFatura">
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="criarCartao()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Exibir compras fatura -->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" id="modalFatura" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-modal-despesas-cc">
+                    <img class="iconBandeiraCC" src="assets/images/bandeiraCartoes/{{bandeira}}.png" alt="">
+                    <h3 style="margin-top:12px;" class="modal-title" id="exampleModalLabel">Despesas do cartão <b>{{nomeCartao}}</b></h3>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" *ngIf="despCC.length > 0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Valor</th>
+                            <th scope="col">Categoria</th>
+                            <th scope="col">Data fatura</th>
+                            <th scope="col">fixa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let desp of despCC">
+                            <th scope="row">{{$any(desp).valor | currency: 'BRL' }}</th>
+                            <td>{{$any(desp).categoria}}</td>
+                            <td>{{$any(desp).dataVencimento | date: 'dd/MM/yyyy'}}</td>
+                            <td>{{$any(desp).fixa}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p *ngIf="despCC.length <= 0">Nenhuma despesa para esse cartão!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal excluir cartao -->
+<div class="modal fade" id="ConfirmarExclusãoDespesa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 *ngIf="!successDelete && !errorDelete" class="modal-title" id="exampleModalLabel">Tem certeza que deseja excluir?</h2>
+                <h2 *ngIf="successDelete" class="modal-title title-success" id="exampleModalLabel">Sucesso!</h2>
+                <h2 *ngIf="errorDelete" class="modal-title title-error" id="exampleModalLabel">Não foi possível deletar, tente novamente mais tarde.</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="!successDelete && !errorDelete" id="itensDell">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cartão</th>
+                                <th scope="col">Bandeira</th>
+                                <th scope="col">Limite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td scope="row">{{nomeCc}}</td>
+                                <td>{{bandeiraCc}}</td>
+                                <td>{{limiteCc | currency: 'BRL'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div *ngIf="successDelete" id="successDel" class="centralizar-icon">
+                    <div class="sa">
+                        <div class="sa-success">
+                            <div class="sa-success-tip"></div>
+                            <div class="sa-success-long"></div>
+                            <div class="sa-success-placeholder"></div>
+                            <div class="sa-success-fix"></div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="errorDelete" id="errorDel" class="centralizar-icon">
+                    <div class="sa">
+                        <div class="sa-error">
+                            <div class="sa-error-x">
+                                <div class="sa-error-left"></div>
+                                <div class="sa-error-right"></div>
+                            </div>
+                            <div class="sa-error-placeholder"></div>
+                            <div class="sa-error-fix"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="zerarVariaveis()">Fechar</button>
+                <button *ngIf="!successDelete && !errorDelete" type="button" class="btn btn-danger" (click)="excluirCartao(idDeleteCC)">Deletar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+<div class="row">
+    <div class="col-4">
+        <div class="list-group" id="list-tab" role="tablist">
+            <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="home"><img class="iconBandeiraCC" src="/assets/images/bandeiraCartoes/MasterCard.png" alt=""></a>
+            <a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="profile"><img class="iconBandeiraCC" src="/assets/images/bandeiraCartoes/visa.png" alt=""></a>
+            <a class="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Messages</a>
+            <a class="list-group-item list-group-item-action" id="list-settings-list" data-bs-toggle="list" href="#list-settings" role="tab" aria-controls="settings">Settings</a>
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">...</div>
+            <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">...</div>
+            <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
+            <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
+        </div>
+    </div>
+</div> -->
