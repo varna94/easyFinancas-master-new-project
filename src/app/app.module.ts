@@ -40,6 +40,8 @@ import { CurrencyMaskConfig, CurrencyMaskModule, CURRENCY_MASK_CONFIG } from 'ng
 
 import * as firebase from 'firebase';
 import { firestore } from 'firebase-admin';
+import { ChartsModule } from 'ng2-charts';
+
 firebase.default.initializeApp(environment.firebase);
 
 registerLocaleData(ptBr);
@@ -75,6 +77,8 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
   bootstrap: [AppComponent],
   imports: [BrowserModule, RouterModule.forRoot(appRoutes, { paramsInheritanceStrategy: 'always' }), ReactiveFormsModule,
     AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule, AngularFireAuthModule, HttpClientModule,
-    AngularFirestoreModule, MatProgressSpinnerModule, BrowserAnimationsModule, CurrencyMaskModule],
+    AngularFirestoreModule, MatProgressSpinnerModule, BrowserAnimationsModule, CurrencyMaskModule, ChartsModule
+  ],
+  exports: [ChartsModule]
 })
 export class AppModule { }
