@@ -24,6 +24,7 @@ export class DespesaComponent implements OnInit {
   updateDespInfo :any;
   public bancoConta: string[] = [];
   public listaCB: Array<[string, any]> = [];
+
   constructor(public apService: ApiService, private formDasboard: FormBuilder) {
     this.formadicionarDespesa = this.formDasboard.group({
       valor: [],

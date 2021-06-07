@@ -1,6 +1,10 @@
+import { ApiService } from './../../api.service';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ChartDataSets, ChartOptions, ChartType} from 'chart.js';
-import { Color, Label, monkeyPatchChartJsTooltip, MultiDataSet,monkeyPatchChartJsTooltip ,monkeyPatchChartJsLegend,MultiDataSet } from 'ng2-charts';
+import { Color, Label, monkeyPatchChartJsTooltip, MultiDataSet ,monkeyPatchChartJsLegend, SingleDataSet } from 'ng2-charts';
+import { listaDespesas, DashboardComponent, usersLogado } from './../dashboard/dashboard.component';
+import { convertUpdateArguments } from '@angular/compiler/src/compiler_util/expression_converter';
+
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
@@ -20,20 +24,28 @@ export class BoardComponent implements OnInit {
   barChartType: ChartType;
   barChartLegend : boolean;
   barChartPlugins : any;
- barChartData: ChartDataSets[];
+  barChartData: ChartDataSets[];
 
- doughnutChartLabels: Label[];
- doughnutChartType: ChartType;
- doughnutChartData: MultiDataSet;
+  doughnutChartLabels: Label[];
+  doughnutChartType: ChartType;
+  doughnutChartData: MultiDataSet;
+  doughnutBackgroundColor: Color;
 
- pieChartOptions: ChartOptions;
- pieChartLabels: Label[] ;
- pieChartData: SingleDataSet;
- pieChartType: ChartType;
- pieChartLegend: boolean;
- pieChartPlugins: any;
+  pieChartOptions: ChartOptions;
+  pieChartLabels: Label[] ;
+  pieChartData: SingleDataSet;
+  pieChartType: ChartType;
+  pieChartLegend: boolean;
+  pieChartPlugins: any;
 
-  constructor() {
+  public despesas: Array<[string, any]> = [];
+  uidUserLS:any;
+  categoria: Array<[string, any]> = [];
+  showCategoria: Array<any> = [];
+  listaCategoria: Array<any>=[];
+  listaQtd:Array<number> =[];
+
+  constructor(public apService: ApiService) {
     monkeyPatchChartJsTooltip();
     monkeyPatchChartJsLegend();
   }
@@ -41,6 +53,76 @@ export class BoardComponent implements OnInit {
   ngOnInit(){
     this.lineChart();
     this.BarChartComponent();
+    this.DoughnutChartComponent();
+    this.PieChartComponent();
+
+    this.buscarDespesas();
+    // interface showCategoria{
+    //   categoria:string,
+    //   qtd:number
+    // }
+  }
+
+  buscarDespesas(){
+    this.uidUserLS = JSON.parse(localStorage.getItem("user") || '{}')
+    const desp = this.apService.GetDespesas().then(data => {
+      // this.despesas = data;
+      for (let i = 0; i < data.length; i++) {
+        if(usersLogado.idPai && usersLogado.idPai !== ' '){
+          if (data[i].uid === usersLogado.idPai ) {
+            this.despesas.push(data[i]);
+          }
+        }else{
+          if (data[i].uid === this.uidUserLS.uid) {
+            this.despesas.push(data[i]);
+
+
+            this.categoria.push(data[i].categoria);
+
+          }
+        }
+      }
+
+      this.contagem(this.categoria);
+
+      return data;
+    });
+  }
+  contagem(categorias: Array<[string, any]>){
+    categorias.sort();
+      var current = null;
+      var cnt = 0;
+    console.log(categorias);
+      for (var i = 0; i < categorias.length; i++) {
+          if (categorias[i] != current) {
+              if (cnt > 0) {
+                  console.log(current + ' comes --> ' + cnt + ' times');
+                  this.showCategoria.push({categoria:current,qts:cnt});
+
+                  this.listaCategoria.push(current);
+                  this.listaQtd.push(cnt);
+              }
+              current = categorias[i];
+              cnt = 1;
+
+          } else {
+              cnt++;
+          }
+
+      }
+
+      if (cnt > 0) {
+          console.log(current + ' comes --> ' + cnt + ' times');
+          this.showCategoria.push({categoria:current,qts:cnt});
+           this.listaCategoria.push(current);
+           this.listaQtd.push(cnt);
+      }
+
+
+      console.log(this.listaQtd);
+      console.log(this.listaCategoria);
+      console.log(this.showCategoria);
+
   }
   lineChart(){
     this.lineChartData = [
@@ -77,11 +159,24 @@ export class BoardComponent implements OnInit {
   }
 
   DoughnutChartComponent(){
-    this.doughnutChartLabels = ['BMW', 'Ford', 'Tesla'];
-    this.doughnutChartData = [[55, 25, 20]];
+    this.doughnutChartLabels = this.listaCategoria;
+    this.doughnutChartData = [this.listaQtd];
     this.doughnutChartType = 'doughnut';
-  }
 
+  }
+  getRandomColor(){
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+  filtroCategoria(obj : any){
+    var retornoLista;
+    // obj.filter(())
+    return retornoLista;
+  }
   PieChartComponent(){
     this.pieChartOptions = {responsive: true};
     this.pieChartLabels = [['SciFi'], ['Drama'], 'Comedy'];
@@ -89,8 +184,6 @@ export class BoardComponent implements OnInit {
     this.pieChartType = 'pie';
     this.pieChartLegend = true;
     this.pieChartPlugins = [];
-
- 
   }
 }
 
