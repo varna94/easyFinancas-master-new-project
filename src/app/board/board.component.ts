@@ -98,7 +98,7 @@ export class BoardComponent implements OnInit {
               mes:this.monthNames[new Date(data[i].dataVencimento.replace('Z','')).getMonth()],
               valor:data[i].valor
             });
- 
+
             this.listaCategoria.push(data[i].categoria);
             this.auxMes.push(this.monthNames[new Date(data[i].dataVencimento.replace('Z','')).getMonth()]);
             this.valoresDesp.push(data[i].valor);
@@ -199,35 +199,22 @@ export class BoardComponent implements OnInit {
   }
 
   agrupar(antigo:any){
-
     var resul: any = [];
-
     antigo.reduce(function(novo:any, item:any) {
       if (!novo[item.categoria]) {
         novo[item.categoria] = {
           valor: 0,
           categoria: item.categoria
         };
-
          resul.push(novo[item.categoria]);
-
       }
-
       novo[item.categoria].valor += item.valor;
-
       return novo;
     }, {});
     this.resultado = resul;
     console.log(resul);
     return this.resultado;
 
-    // const total = itens.reduce((acumulador:any, { categoria, valor }) => {
-    //   acumulador[categoria] = (acumulador[categoria] || 0) + valor;
-
-    //   return acumulador;
-    // }, {});
-
-    // return Object.keys(total).map((categoria) => ({ categoria, valor: total[categoria] }));
   }
 
   contagem(categorias: string[]){
@@ -236,7 +223,6 @@ export class BoardComponent implements OnInit {
     var cnt = 0;
       for (var i = 0; i < categorias.length; i++) {
           if (categorias[i] != current) {
-
               if (cnt > 0) {
                   // this.showCategoria.push({categoria:current,qts:cnt});
                   this.listaCategoriaChart.push(current);
@@ -249,21 +235,16 @@ export class BoardComponent implements OnInit {
               cnt++;
           }
       }
-
       if (cnt > 0) {
            this.listaCategoriaChart.push(current);
            this.listaQtd.push(cnt);
       }
-
-
   }
 
   lineChart(){
-
     this.lineChartData = [
         { data: this.listvalorMes},
       ];
-
       this.lineChartLabels = this.listMes;
 
       this.lineChartOptions = {
@@ -280,10 +261,6 @@ export class BoardComponent implements OnInit {
       this.lineChartLegend = false;
       this.lineChartPlugins = [];
       this.lineChartType = 'line';
-  }
-
-  filterMes(despMes: Array<string>){
-    return despMes.filter((este, i) => despMes.indexOf(este) === i);
   }
 
   BarChartComponent (){
@@ -306,7 +283,6 @@ export class BoardComponent implements OnInit {
 
   tipoGrafico(val:any){
     if(val.value === 'total-mes'){
-
       this.lineChart();
       this.showTotalMes = true;
       this.showQtdCategoria = false;
@@ -323,27 +299,7 @@ export class BoardComponent implements OnInit {
       this.showQtdCategoria = false;
       this.showTotalDespesaCategoria = true;
     }
-    // switch (val.value){
-    //   case 'total-mes' : {
-    //     this.showTotalMes = true;
-    //     this.showQtdCategoria = false;
-    //     this.showTotalDespesaCategoria = false;
-    //     break;
-    //   }
-    //   case 'qtd-categoria' : {
-    //     this.showTotalMes = false;
-    //     this.showQtdCategoria = true;
-    //     this.showTotalDespesaCategoria = false;
-    //     break;
-    //   }
-    //   case 'total-despesa-categoria' : {
-    //     this.showTotalMes = false;
-    //     this.showQtdCategoria = false;
-    //     this.showTotalDespesaCategoria = true;
-    //   }
-    // }
 
-    console.log(val.value);
   }
 }
 
