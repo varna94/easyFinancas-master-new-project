@@ -1,16 +1,26 @@
-<div class="chart-wrapper graficos-card">
-    <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions" [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType" [plugins]="lineChartPlugins">
-    </canvas>
-</div>
-<div class="chart-wrapper graficos-card">
-    <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [plugins]="barChartPlugins" [legend]="barChartLegend" [chartType]="barChartType">
-</canvas>
-</div>
-<div class="chart-wrapper graficos-card">
-    <canvas baseChart [data]="doughnutChartData" [labels]="doughnutChartLabels" [chartType]="doughnutChartType">
-</canvas>
-</div>
-<div class="chart-wrapper graficos-card">
-    <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
-</canvas>
+<div>
+    <div class="select-graph-title">
+        <!-- <h3>Tipo de Gráfico</h3> -->
+        <label class="select-graph">
+          <select class="form-select" (change)="tipoGrafico($event.target)">
+            <option selected value="qtd-categoria">Quantidade de despesas por categoria</option>
+            <option value="total-mes" >Total de despesas por mês</option>
+            <option value="total-despesa-categoria">Total de despesas por categoria</option>
+          </select>
+        </label>
+    </div>
+    <div class="graphs">
+        <div *ngIf="showTotalMes == true" class="chart-wrapper graficos-card">
+            <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions" [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType" [plugins]="lineChartPlugins">
+            </canvas>
+        </div>
+        <div *ngIf="showTotalDespesaCategoria == true" class="chart-wrapper graficos-card">
+            <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [plugins]="barChartPlugins" [legend]="barChartLegend" [chartType]="barChartType">
+            </canvas>
+        </div>
+        <div *ngIf="showQtdCategoria == true" class="chart-wrapper graficos-card">
+            <canvas baseChart [data]="doughnutChartData" [labels]="doughnutChartLabels" [chartType]="doughnutChartType">
+            </canvas>
+        </div>
+    </div>
 </div>

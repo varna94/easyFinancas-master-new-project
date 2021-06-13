@@ -44,16 +44,27 @@ export class BoardComponent implements OnInit {
   uidUserLS:any;
   categoria: any;
   showCategoria: any[]= [];
-  listaCategoria: any[]=[];
+  listaCategoria: string[]=[];
+  listaCategoriaChart: string[]=[];
   listaQtd: number[] =[];
 
-  monthNames: Array<string> = ["Janeiro", "Fevereiro", "Maio", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  monthNames: Array<string> = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
   mesDespesas: string[] = [];
   auxMes: string[] = [];
   valoresDesp: any[] = [];
 
   resultado:any ;
   categoriaValorAgrupado: any;
+  listCategoriaValor: string[] = [];
+  listValorCategoria: any[] = [];
+  despesaMensal: any;
+
+  listMes: string[] = [];
+  listvalorMes : any[] = [];
+
+  showTotalMes : boolean;
+  showQtdCategoria : boolean;
+  showTotalDespesaCategoria: boolean;
 
   constructor(public apService: ApiService) {
     monkeyPatchChartJsTooltip();
@@ -61,18 +72,18 @@ export class BoardComponent implements OnInit {
   }
 
   ngOnInit(){
-    // this.lineChart();
+
     this.buscarDespesas();
 
   }
   buscarDespesas(){
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"];
 
     var tstCatValor = [{}];
-    this.uidUserLS = JSON.parse(localStorage.getItem("user") || '{}')
+    var valorPorMes = [{}];
+    this.uidUserLS = JSON.parse(localStorage.getItem("user") || '{}');
+
     const desp = this.apService.GetDespesas().then(data => {
-      // this.despesas = data;
+
       for (let i = 0; i < data.length; i++) {
         if(usersLogado.idPai && usersLogado.idPai !== ' '){
           if (data[i].uid === usersLogado.idPai ) {
@@ -81,6 +92,16 @@ export class BoardComponent implements OnInit {
               categoria:data[i].categoria,
               valor:data[i].valor
             });
+
+            valorPorMes.push({
+              mesNum: new Date(data[i].dataVencimento.replace('Z','')).getMonth(),
+              mes:this.monthNames[new Date(data[i].dataVencimento.replace('Z','')).getMonth()],
+              valor:data[i].valor
+            });
+ 
+            this.listaCategoria.push(data[i].categoria);
+            this.auxMes.push(this.monthNames[new Date(data[i].dataVencimento.replace('Z','')).getMonth()]);
+            this.valoresDesp.push(data[i].valor);
           }
         }else{
           if (data[i].uid === this.uidUserLS.uid) {
@@ -89,8 +110,15 @@ export class BoardComponent implements OnInit {
               categoria:data[i].categoria,
               valor:data[i].valor
             });
+
+            valorPorMes.push({
+              mesNum: new Date(data[i].dataVencimento.replace('Z','')).getMonth(),
+              mes:this.monthNames[new Date(data[i].dataVencimento.replace('Z','')).getMonth()],
+              valor:data[i].valor
+            });
+
             this.listaCategoria.push(data[i].categoria);
-            this.auxMes.push(monthNames[new Date(data[i].dataVencimento.replace('Z','')).getMonth()]);
+            this.auxMes.push(this.monthNames[new Date(data[i].dataVencimento.replace('Z','')).getMonth()]);
             this.valoresDesp.push(data[i].valor);
 
           }
@@ -99,28 +127,77 @@ export class BoardComponent implements OnInit {
 
       this.categoria = tstCatValor;
       this.categoriaValorAgrupado = this.agrupar(tstCatValor);
+      this.despesaMensal = this.agruparValorMensal(valorPorMes.sort((a:any, b:any) => a.mesNum < b.mesNum ? -1 : a.mesNum > b.mesNum ? 1 : 0));
 
-      console.log(this.categoriaValorAgrupado);
-
-      this.mesDespesas = this.auxMes.filter((este:any, i:any) => this.auxMes.indexOf(este) === i);
-
+      this.filterCategoriaValor(this.categoriaValorAgrupado);
+      this.filterMesValor(this.despesaMensal);
       this.contagem(this.listaCategoria);
-      // this.contagemValor(this.categoria, this.valoresDesp);
 
-      this.BarChartComponent();
+      this.showQtdCategoria = true;
       this.DoughnutChartComponent();
-      this.PieChartComponent();
-      this.lineChart();
 
-       console.log(this.despesas);
+      // return data;
+    });
+    //
+  }
 
-      // console.log(this.valoresDesp);
-      // console.log(this.mesDespesas);
+  filterMesValor(categoria: any){
+    console.log('func filter - '+categoria)
+    var listames: string[]= [];
+    var listaValor: any[] = [];
 
-      return data;
+    categoria.filter(function(cate:any){
+      console.log( cate.mes != undefined);
+      if(cate.mes){
+        listames.push(cate.mes);
+        listaValor.push(cate.valor.toFixed(2));
+      }
+      return cate.mes != undefined;
     });
 
+    this.listMes = listames;
+    this.listvalorMes = listaValor;
+    console.log('mes - '+this.listMes );
+    console.log('valores - '+this.listvalorMes);
   }
+
+  filterCategoriaValor(categoria: any){
+    var listaCateteste: string[]= [];
+    var listaValorCate: any[] = [];
+
+     categoria.filter(function(cate:any){
+      console.log( cate.categoria != undefined);
+      if(cate.categoria){
+        listaCateteste.push(cate.categoria);
+        listaValorCate.push(cate.valor.toFixed(2));
+      }
+      return cate.categoria != undefined;
+    } );
+    this.listCategoriaValor = listaCateteste;
+    this.listValorCategoria = listaValorCate;
+  }
+
+  agruparValorMensal(antigo:any){
+
+    var resul: any = [];
+
+    antigo.reduce(function(novo:any, item:any) {
+      if (!novo[item.mes]) {
+        novo[item.mes] = {
+          valor: 0,
+          mes: item.mes
+        };
+         resul.push(novo[item.mes]);
+      }
+      novo[item.mes].valor += item.valor;
+      return novo;
+    }, {});
+    // this.resultado = resul;
+    console.log(resul);
+    return resul;
+
+  }
+
   agrupar(antigo:any){
 
     var resul: any = [];
@@ -153,34 +230,16 @@ export class BoardComponent implements OnInit {
     // return Object.keys(total).map((categoria) => ({ categoria, valor: total[categoria] }));
   }
 
-  // sortxx(tt:any){
-  //   var sortable = [];
-  //   for (var i in tt) {
-  //     // console.log(tt);
-  //       sortable.push([i, tt[i]]);
-
-  //   }
-
-  //  return sortable.sort(function(a, b) {
-  //       return a[1] - b[1];
-  //   });
-  // }
-
-  contagem(categorias: any){
+  contagem(categorias: string[]){
     categorias.sort();
-    console.log(categorias);
-  //  var sortTeste = this.sortxx(categorias);
-      var current = null;
-      var cnt = 0;
-
-    //  console.log(sortTeste);
+    var current = '';
+    var cnt = 0;
       for (var i = 0; i < categorias.length; i++) {
           if (categorias[i] != current) {
-              if (cnt > 0) {
-                  // console.log(current + ' comes --> ' + cnt + ' times');
-                  // this.showCategoria.push({categoria:current,qts:cnt});
 
-                  this.listaCategoria.push(current);
+              if (cnt > 0) {
+                  // this.showCategoria.push({categoria:current,qts:cnt});
+                  this.listaCategoriaChart.push(current);
                   this.listaQtd.push(cnt);
               }
               current = categorias[i];
@@ -191,49 +250,21 @@ export class BoardComponent implements OnInit {
           }
       }
 
-
       if (cnt > 0) {
-          //  console.log(current + ' comes --> ' + cnt + ' times');
-          // this.showCategoria.push({categoria:current,qts:cnt});
-           this.listaCategoria.push(current);
+           this.listaCategoriaChart.push(current);
            this.listaQtd.push(cnt);
       }
 
+
   }
-  // contagemValor(categorias: Array<[string, any]>, valores: any[]){
-  //   categorias.sort();
-  //     var current = null;
-  //     var cnt = 0;
-  //   // console.log(categorias);
-  //     for (var i = 0; i < categorias.length; i++) {
-  //         if (categorias[i] != current) {
-  //             if (cnt > 0) {
-  //                 // console.log(current + ' comes --> ' + cnt + ' times');
 
-  //             }
-  //             current = categorias[i];
-  //             cnt = 1;
-
-  //         } else {
-  //             cnt++;
-  //         }
-
-  //     }
-
-  //     if (cnt > 0) {
-  //         // console.log(current + ' comes --> ' + cnt + ' times');
-
-  //     }
-
-  // }
   lineChart(){
-    // var teste =  ['January', 'February', 'March', 'April', 'May', 'June'];
 
     this.lineChartData = [
-        { data: this.valoresDesp, label: 'Crude oil prices' },
+        { data: this.listvalorMes},
       ];
 
-      this.lineChartLabels = this.mesDespesas;
+      this.lineChartLabels = this.listMes;
 
       this.lineChartOptions = {
         responsive: true,
@@ -246,7 +277,7 @@ export class BoardComponent implements OnInit {
         },
       ];
 
-      this.lineChartLegend = true;
+      this.lineChartLegend = false;
       this.lineChartPlugins = [];
       this.lineChartType = 'line';
   }
@@ -256,48 +287,63 @@ export class BoardComponent implements OnInit {
   }
 
   BarChartComponent (){
-    var teste = this.mesDespesas;
     this.barChartOptions = {
       responsive: true,
     };
-    this.barChartLabels = teste;
+    this.barChartLabels =  this.listCategoriaValor;
     this.barChartType = 'bar';
-    this.barChartLegend = true;
+    this.barChartLegend = false;
     this.barChartPlugins = [];
-
-    this.barChartData = [ { data: this.categoriaValorAgrupado, label: 'Best Fruits' } ];
+    this.barChartData = [ { data: this.listValorCategoria} ];
   }
 
   DoughnutChartComponent(){
-    console.log(this.listaCategoria);
-    this.doughnutChartLabels = this.listaCategoria;
+    this.doughnutChartLabels = this.listaCategoriaChart;
     this.doughnutChartData = [this.listaQtd];
     this.doughnutChartType = 'doughnut';
 
   }
 
-  // getRandomColor(){
-  //   var letters = '0123456789ABCDEF'.split('');
-  //   var color = '#';
-  //   for (var i = 0; i < 6; i++ ) {
-  //       color += letters[Math.floor(Math.random() * 16)];
-  //   }
-  //   return color;
-  // }
+  tipoGrafico(val:any){
+    if(val.value === 'total-mes'){
 
-  filtroCategoria(obj : any){
-    var retornoLista;
-    // obj.filter(())
-    return retornoLista;
-  }
+      this.lineChart();
+      this.showTotalMes = true;
+      this.showQtdCategoria = false;
+      this.showTotalDespesaCategoria = false;
+    }else if(val.value === 'qtd-categoria'){
 
-  PieChartComponent(){
-    this.pieChartOptions = {responsive: true};
-    this.pieChartLabels = [['SciFi'], ['Drama'], 'Comedy'];
-    this.pieChartData = [30, 50, 20];
-    this.pieChartType = 'pie';
-    this.pieChartLegend = true;
-    this.pieChartPlugins = [];
+      this.DoughnutChartComponent();
+      this.showTotalMes = false;
+      this.showQtdCategoria = true;
+      this.showTotalDespesaCategoria = false;
+    }else if(val.value === 'total-despesa-categoria'){
+      this.BarChartComponent();
+      this.showTotalMes = false;
+      this.showQtdCategoria = false;
+      this.showTotalDespesaCategoria = true;
+    }
+    // switch (val.value){
+    //   case 'total-mes' : {
+    //     this.showTotalMes = true;
+    //     this.showQtdCategoria = false;
+    //     this.showTotalDespesaCategoria = false;
+    //     break;
+    //   }
+    //   case 'qtd-categoria' : {
+    //     this.showTotalMes = false;
+    //     this.showQtdCategoria = true;
+    //     this.showTotalDespesaCategoria = false;
+    //     break;
+    //   }
+    //   case 'total-despesa-categoria' : {
+    //     this.showTotalMes = false;
+    //     this.showQtdCategoria = false;
+    //     this.showTotalDespesaCategoria = true;
+    //   }
+    // }
+
+    console.log(val.value);
   }
 }
 

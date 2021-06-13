@@ -56,7 +56,7 @@ export class DashboardComponent implements OnInit {
   errorSendEmail: boolean = false;
   emailVazio: boolean = false;
   nomeVazio: boolean = false;
-  exibirBoard: boolean = false;
+  exibirBoard: boolean;
   nomeInvalido: boolean;
   isDep: boolean =false;
   relacionamentos : any;
@@ -83,23 +83,27 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.uidUserLS = JSON.parse(localStorage.getItem("user") || '{}');
-    console.log(this.uidUserLS);
-    console.log(this.authService.isLoggedIn);
+    // console.log(this.uidUserLS);
+    // console.log(this.authService.isLoggedIn);
     let user = firebase.default.auth().currentUser;
     this.userlogado = this.uidUserLS.uid;
-    console.log(user?.uid);
+    // console.log(user?.uid);
     if (this.authService.isLoggedIn || user?.uid || this.uidUserLS.uid) {
 
       this.usersInfo();
       this.getRelacionamentos();
       console.log('despesas mongoDB');
       console.log(this.serviceDb.GetDespesas());
+
     } else {
       console.log('usuario n logado');
       this.router.navigate(['']);
     }
+
     this.criarFormAddDep();
+
   }
 
   getRelacionamentos(){
@@ -134,6 +138,7 @@ export class DashboardComponent implements OnInit {
         console.log(e);
       })
     }
+    this.exibirBoard = true;
     return this.relacionamentos;
   }
 
