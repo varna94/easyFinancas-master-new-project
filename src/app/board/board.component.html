@@ -9,16 +9,17 @@
           </select>
         </label>
     </div>
-    <div class="graphs">
-        <div *ngIf="showTotalMes == true" class="chart-wrapper graficos-card">
+    <p *ngIf="!possuiRegistros" class="semGraficos">Nenhuma despesa cadastrada!</p>
+    <div *ngIf="possuiRegistros" class="graphs">
+        <div *ngIf="showTotalMes" class="chart-wrapper graficos-card">
             <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions" [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType" [plugins]="lineChartPlugins">
             </canvas>
         </div>
-        <div *ngIf="showTotalDespesaCategoria == true" class="chart-wrapper graficos-card">
+        <div *ngIf="showTotalDespesaCategoria" class="chart-wrapper graficos-card">
             <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [plugins]="barChartPlugins" [legend]="barChartLegend" [chartType]="barChartType">
             </canvas>
         </div>
-        <div *ngIf="showQtdCategoria == true" class="chart-wrapper graficos-card">
+        <div *ngIf="showQtdCategoria" class="chart-wrapper graficos-card">
             <canvas baseChart [data]="doughnutChartData" [labels]="doughnutChartLabels" [chartType]="doughnutChartType">
             </canvas>
         </div>

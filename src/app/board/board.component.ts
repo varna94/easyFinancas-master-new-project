@@ -66,6 +66,7 @@ export class BoardComponent implements OnInit {
   showQtdCategoria : boolean;
   showTotalDespesaCategoria: boolean;
 
+  possuiRegistros: Boolean = false;
   constructor(public apService: ApiService) {
     monkeyPatchChartJsTooltip();
     monkeyPatchChartJsLegend();
@@ -124,7 +125,9 @@ export class BoardComponent implements OnInit {
           }
         }
       }
-
+      if (this.despesas.length > 0){
+        this.possuiRegistros = true;
+      }
       this.categoria = tstCatValor;
       this.categoriaValorAgrupado = this.agrupar(tstCatValor);
       this.despesaMensal = this.agruparValorMensal(valorPorMes.sort((a:any, b:any) => a.mesNum < b.mesNum ? -1 : a.mesNum > b.mesNum ? 1 : 0));
@@ -288,7 +291,6 @@ export class BoardComponent implements OnInit {
       this.showQtdCategoria = false;
       this.showTotalDespesaCategoria = false;
     }else if(val.value === 'qtd-categoria'){
-
       this.DoughnutChartComponent();
       this.showTotalMes = false;
       this.showQtdCategoria = true;
@@ -299,7 +301,6 @@ export class BoardComponent implements OnInit {
       this.showQtdCategoria = false;
       this.showTotalDespesaCategoria = true;
     }
-
   }
 }
 
